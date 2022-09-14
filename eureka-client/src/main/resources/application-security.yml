@@ -1,0 +1,11 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: eureka-client
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://hoodee:123456@localhost:8083/eureka/
