@@ -176,3 +176,36 @@ hystrix:
       coreSize: 10
 
 ```
+>Hystrix提供了Hystrix Dashboard来实时监控HystrixCommand方法的执行情况。 Hystrix Dashboard可以有效地反映出每个Hystrix实例的运行情况，帮助我们快速发现系统中的问题，从而采取对应措施。
+
+### Spring Cloud OpenFeign：基于Ribbon和Hystrix的声明式服务调用
+> 简介：Spring Cloud OpenFeign 是声明式的服务调用工具，它整合了Ribbon和Hystrix，拥有负载均衡和服务容错功能
+
+> 1. 在启动类上添加@EnableFeignClients注解来启用Feign的客户端功能
+> 2. @FeignClient注解实现了一个Feign客户端，其中的value为user-service表示这是对user-service服务的接口调用客户端。
+> 3. 添加服务降级实现类UserFallbackService, 对接口中的每个实现方法进行了服务降级逻辑的实现
+> 4. 修改@FeignClient注解中的参数，设置fallback为UserFallbackService.class即可。
+> 5. 添加配置文件feign.hystrix.enabled: true #在Feign中开启Hystrix
+
+#### 常用配置
+##### Feign自己的配置
+```yaml
+feign:
+  hystrix:
+    enabled: true #在Feign中开启Hystrix
+  compression:
+    request:
+      enabled: false #是否对请求进行GZIP压缩
+      mime-types: text/xml,application/xml,application/json #指定压缩的请求数据类型
+      min-request-size: 2048 #超过该大小的请求会被压缩
+    response:
+      enabled: false #是否对响应进行GZIP压缩
+logging:
+  level: #修改日志级别
+    com.macro.cloud.service.UserService: debug
+```
+##### Feign中的Ribbon配置
+>在Feign中配置Ribbon可以直接使用Ribbon的配置
+
+##### Feign中的Hystrix配置
+>在Feign中配置Hystrix可以直接使用Hystrix的配置
