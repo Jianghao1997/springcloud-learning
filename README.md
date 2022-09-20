@@ -209,3 +209,35 @@ logging:
 
 ##### Feign中的Hystrix配置
 >在Feign中配置Hystrix可以直接使用Hystrix的配置
+
+### Spring Cloud Zuul：API网关服务
+> 简介：API网关为微服务架构中的服务提供了统一的访问入口，客户端通过API网关访问相关服务。API网关的定义类似于设计模式中的门面模式，它相当于整个微服务架构中的门面，所有客户端的访问都通过它来进行路由及过滤。它实现了请求路由、负载均衡、校验过滤、服务容错、服务聚合等功能。
+> 所有服务对外暴露的门面
+
+#### 过滤器
+##### 类型
+> 1. pre：在请求被路由到目标服务前执行，比如权限校验、打印日志等功能；
+> 2. routing：在请求被路由到目标服务时执行，这是使用Apache HttpClient或Netflix Ribbon构建和发送原始HTTP请求的地方；
+> 3. post：在请求被路由到目标服务后执行，比如给目标服务的响应添加头信息，收集统计数据等功能；
+> 4. error：请求在其他阶段发生错误时执行。
+
+##### 生命周期
+![img.png](img.png)
+
+#### 常用配置
+```yaml
+zuul:
+  routes: #给服务配置路由
+    user-service:
+      path: /userService/**
+    feign-service:
+      path: /feignService/**
+  ignored-services: user-service,feign-service #关闭默认路由配置
+  prefix: /proxy #给网关路由添加前缀
+  sensitive-headers: Cookie,Set-Cookie,Authorization #配置过滤敏感的请求头信息，设置为空就不会过滤
+  add-host-header: true #设置为true重定向是会添加host请求头
+  retryable: true # 关闭重试机制
+  PreLogFilter:
+    pre:
+      disable: false #控制是否启用过滤器
+```
